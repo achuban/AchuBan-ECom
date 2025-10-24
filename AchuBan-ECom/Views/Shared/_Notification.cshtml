@@ -1,0 +1,18 @@
+﻿<div class="row pt-4">
+    @* No script imports here — layout provides jQuery & toastr *@
+    @if (TempData["success"] != null || TempData["error"] != null)
+    {
+        <script type="text/javascript">
+            (function () {
+                var success = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["success"]));
+                var error = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["error"]));
+                if (success) {
+                    toastr.success(success);
+                }
+                if (error) {
+                    toastr.error(error);
+                }
+            })();
+        </script>
+    }
+</div>

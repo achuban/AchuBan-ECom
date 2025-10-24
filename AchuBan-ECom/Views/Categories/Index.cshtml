@@ -1,0 +1,66 @@
+﻿@model IEnumerable<AchuBan_ECom.Models.Category>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row pt-4">
+        <div class="row col-11">
+            <h5 class="text-muted">Category</h5>
+        </div>
+        <div class="row col-1">
+            <a asp-action="Create" class="btn btn-info btn-sm fw-bold">
+                <i class="bi bi-plus"></i> Add New
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.displayOrder)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm" title="Edit">
+                        <i class="bi bi-pencil-fill"></i>
+                    </a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.displayOrder)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-sm" title="Detail">
+                        <i class="bi bi-fullscreen"></i>
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm" title="Delete">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

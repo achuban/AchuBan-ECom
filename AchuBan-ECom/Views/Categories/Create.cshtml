@@ -1,0 +1,51 @@
+﻿@model AchuBan_ECom.Models.Category
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="row pt-4">
+        <div class="row col-11">
+            <h5 class="text-muted">Create Category</h5>
+        </div>
+        <div class="row col-1">
+            <a asp-action="Index" class="btn btn-secondary p-2">Cancel</a>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="col-form-label mt-2"></label>
+                <input asp-for="Name" class="form-control" spellcheck="true" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="col-form-label mt-2"></label>
+                <input asp-for="Description" class="form-control" spellcheck="true   />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="displayOrder" class="col-form-label mt-2"></label>
+                <input asp-for="displayOrder" class="form-control" />
+                <span asp-validation-for="displayOrder" class="text-danger"></span>
+            </div>
+            <div class="form-group pt-2">
+                <input type="submit" value="Create" class="btn btn-primary p-2" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
