@@ -1,3 +1,5 @@
+using AchuBan_Ecom.DataAccess.Repository;
+using AchuBan_Ecom.DataAccess.Repository.IRepository;
 using AchuBan_ECom.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +10,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
+
+// Register repositories
+//builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 
 
 var app = builder.Build();

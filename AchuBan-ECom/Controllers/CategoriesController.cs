@@ -1,32 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using AchuBan_ECom.Data;
 using Microsoft.Data.SqlClient;
 using AchuBan_ECom.Models;
+using AchuBan_Ecom.DataAccess.Repository.IRepository;
 
 namespace AchuBan_ECom.Controllers
 {
     public class CategoriesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CategoriesController(ApplicationDbContext context)
+        public CategoriesController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Categories
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            var categories = _unitOfWork.CategoryRepository.GetAll();
+            return View(categories);
         }
 
         // GET: Categories/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null) return NotFound();
 
-            var category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
+            var category = _unitOfWork.CategoryRepository.Get(c => c.Id == id.Value);
             if (category == null) return NotFound();
 
             return View(category);
@@ -41,24 +42,23 @@ namespace AchuBan_ECom.Controllers
         // POST: Categories/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,displayOrder")] Category category)
+        public IActionResult Create([Bind("Id,Name,Description,displayOrder")] Category category)
         {
             if (!ModelState.IsValid) return View(category);
 
-            _context.Add(category);
+            _unitOfWork.CategoryRepository.Add(category);
             try
             {
-                await _context.SaveChangesAsync();
+                _unitOfWork.Save();
                 TempData["success"] = "Category created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)
             {
-                // Detect SQL Server duplicate-key error numbers (2627, 2601)
                 var baseEx = ex.GetBaseException();
                 if (baseEx is SqlException sqlEx && (sqlEx.Number == 2627 || sqlEx.Number == 2601))
                 {
-                    ModelState.AddModelError("Name", "A category with this name already exists.");
+                    ModelState.AddModelError(nameof(Category.Name), "A category with this name already exists.");
                     TempData["error"] = "A category with this name already exists.";
                 }
                 else
@@ -68,7 +68,7 @@ namespace AchuBan_ECom.Controllers
                         (msg.IndexOf("IX_Categories_Name", StringComparison.OrdinalIgnoreCase) >= 0 ||
                          msg.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0))
                     {
-                        ModelState.AddModelError("Name", "A category with this name already exists.");
+                        ModelState.AddModelError(nameof(Category.Name), "A category with this name already exists.");
                         TempData["error"] = "A category with this name already exists.";
                     }
                     else
@@ -82,28 +82,28 @@ namespace AchuBan_ECom.Controllers
         }
 
         // GET: Categories/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null) return NotFound();
 
-            var category = await _context.Categories.FindAsync(id);
+            var category = _unitOfWork.CategoryRepository.Get(c => c.Id == id.Value);
             if (category == null) return NotFound();
+
             return View(category);
         }
 
         // POST: Categories/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,displayOrder")] Category category)
+        public IActionResult Edit(int id, [Bind("Id,Name,Description,displayOrder")] Category category)
         {
             if (id != category.Id) return NotFound();
-
             if (!ModelState.IsValid) return View(category);
 
             try
             {
-                _context.Update(category);
-                await _context.SaveChangesAsync();
+                _unitOfWork.CategoryRepository.Update(category);
+                _unitOfWork.Save();
                 TempData["success"] = "Category updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
@@ -118,7 +118,7 @@ namespace AchuBan_ECom.Controllers
                 var baseEx = ex.GetBaseException();
                 if (baseEx is SqlException sqlEx && (sqlEx.Number == 2627 || sqlEx.Number == 2601))
                 {
-                    ModelState.AddModelError("Name", "A category with this name already exists.");
+                    ModelState.AddModelError(nameof(Category.Name), "A category with this name already exists.");
                     TempData["error"] = "A category with this name already exists.";
                     return View(category);
                 }
@@ -128,7 +128,7 @@ namespace AchuBan_ECom.Controllers
                     (msg.IndexOf("IX_Categories_Name", StringComparison.OrdinalIgnoreCase) >= 0 ||
                      msg.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0))
                 {
-                    ModelState.AddModelError("Name", "A category with this name already exists.");
+                    ModelState.AddModelError(nameof(Category.Name), "A category with this name already exists.");
                     TempData["error"] = "A category with this name already exists.";
                     return View(category);
                 }
@@ -139,11 +139,11 @@ namespace AchuBan_ECom.Controllers
         }
 
         // GET: Categories/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null) return NotFound();
 
-            var category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
+            var category = _unitOfWork.CategoryRepository.Get(c => c.Id == id.Value);
             if (category == null) return NotFound();
 
             return View(category);
@@ -152,19 +152,22 @@ namespace AchuBan_ECom.Controllers
         // POST: Categories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category != null) _context.Categories.Remove(category);
+            var category = _unitOfWork.CategoryRepository.Get(c => c.Id == id);
+            if (category != null)
+            {
+                _unitOfWork.CategoryRepository.Remove(category);
+                _unitOfWork.Save();
+                TempData["success"] = "Category deleted successfully.";
+            }
 
-            await _context.SaveChangesAsync();
-            TempData["success"] = "Category deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 
         private bool CategoryExists(int id)
         {
-            return _context.Categories.Any(e => e.Id == id);
+            return _unitOfWork.CategoryRepository.Get(c => c.Id == id) != null;
         }
     }
 }
