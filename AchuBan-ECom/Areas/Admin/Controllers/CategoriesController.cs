@@ -4,8 +4,9 @@ using Microsoft.Data.SqlClient;
 using AchuBan_ECom.Models;
 using AchuBan_Ecom.DataAccess.Repository.IRepository;
 
-namespace AchuBan_ECom.Controllers
+namespace AchuBan_ECom.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoriesController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

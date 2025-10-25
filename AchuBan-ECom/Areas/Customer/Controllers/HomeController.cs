@@ -2,12 +2,12 @@ using System.Diagnostics;
 using AchuBan_ECom.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AchuBan_ECom.Controllers
+namespace AchuBan_ECom.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
