@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AchuBan_ECom.Models.Models
@@ -33,6 +34,9 @@ namespace AchuBan_ECom.Models.Models
 
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
+        [ValidateNever]
         public required Category category { get; set; }
+
+        public string? ImageUrl { get; set; }
     }
 }

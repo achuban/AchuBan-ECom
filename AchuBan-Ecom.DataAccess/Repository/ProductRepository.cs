@@ -1,6 +1,9 @@
 ﻿using AchuBan_Ecom.DataAccess.Repository.IRepository;
 using AchuBan_ECom.Data;
 using AchuBan_ECom.Models.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AchuBan_Ecom.DataAccess.Repository
 {
@@ -18,5 +21,11 @@ namespace AchuBan_Ecom.DataAccess.Repository
             _db.Update(product);
         }
 
+        public IEnumerable<Product> GetAllWithCategory()
+        {
+            return _db.Products
+                      .Include(p => p.category)
+                      .ToList();
+        }
     }
 }
