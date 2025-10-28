@@ -1,8 +1,75 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using AchuBan_ECom.Models.Models
+@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Shop";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-shop-window fs-2 text-primary"></i>
+            <div>
+                <h2 class="mb-0 fw-semibold">Shop</h2>
+                <small class="text-muted">Browse our catalog</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="ratio ratio-4x3">
+                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                        {
+                            <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="object-fit:cover;">
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center justify-content-center bg-light h-100">
+                                <i class="bi bi-image" style="font-size:2.5rem;color:#cfcfcf"></i>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <h6 class="card-title mb-1 text-truncate">@product.Name</h6>
+                        <p class="text-muted small mb-2">@product.Author</p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                            <div class="fw-bold text-primary">@String.Format("{0:C}", product.ListPrice)</div>
+                            <div class="d-flex gap-2">
+                                <a asp-area="Customer" asp-controller="Home" asp-action="Details" asp-route-id="@product.Id"
+                                   class="btn btn-sm btn-outline-secondary">View</a>
+                                <a href="javascript:void(0)"
+                                   onclick="addToCartQuick(@product.Id, '@product.Name', @product.ListPrice, '@product.ImageUrl')"
+                                   class="btn btn-sm btn-primary">Add</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        // quick add to cart from index (uses localStorage)
+        function addToCartQuick(id, name, price, imageUrl) {
+            var cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            var existing = cart.find(i => i.productId === id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ productId: id, name: name, price: price, quantity: 1, imageUrl: imageUrl });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            if (window.toastr) toastr.success('Added to cart');
+            else alert('Added to cart');
+        }
+    </script>
+}
