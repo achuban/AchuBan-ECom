@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AchuBan-Ecom.DataAccess\AchuBan-ECom.DataAccess.csproj" />
+    <ProjectReference Include="..\AchuBan-ECom.Utility\AchuBan-ECom.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>

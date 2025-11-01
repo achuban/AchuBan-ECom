@@ -2,6 +2,8 @@
 using AchuBan_ECom.Models;
 using AchuBan_ECom.Models.Models;
 using AchuBan_ECom.Models.ViewModels;
+using AchuBan_ECom.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
@@ -10,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 namespace AchuBan_ECom.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class ProductsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

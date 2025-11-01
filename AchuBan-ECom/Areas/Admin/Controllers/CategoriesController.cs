@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using AchuBan_ECom.Models;
 using AchuBan_Ecom.DataAccess.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AchuBan_ECom.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CategoriesController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

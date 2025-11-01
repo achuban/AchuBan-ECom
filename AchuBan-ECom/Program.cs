@@ -1,10 +1,9 @@
 ﻿using AchuBan_Ecom.DataAccess.Repository;
 using AchuBan_Ecom.DataAccess.Repository.IRepository;
 using AchuBan_ECom.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Identity;
 using AchuBan_ECom.Models.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +22,15 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders()
 .AddDefaultUI(); // Required for Razor Pages like Register/Login
+
+
+// add configuration application cookie 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Account/Login";
+    options.LogoutPath = "/Identity/Account/Logout";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+});
 
 builder.Services.AddRazorPages();
 
