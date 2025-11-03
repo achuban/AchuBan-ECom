@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using AchuBan_ECom.Models;
 using AchuBan_Ecom.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
+using AchuBan_ECom.Utility;
 
 namespace AchuBan_ECom.Areas.Admin.Controllers
 {
