@@ -1,0 +1,67 @@
+﻿@model IEnumerable<AchuBan_ECom.Models.Models.Company>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-bag-heart fs-2 text-primary"></i>
+            <div>
+                <h2 class="mb-0 fw-semibold">Companies</h2>
+                <small class="text-muted">Manage your Companies </small>
+            </div>
+        </div>
+
+        <div>
+            <a asp-area="Admin" asp-controller="Companies" asp-action="Upsert"
+               class="btn btn-primary d-inline-flex align-items-center px-3 py-2">
+                <i class="bi bi-plus-lg me-2"></i>
+                <span class="fw-semibold">Add Company</span>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- render antiforgery token (hidden) so product.js can read it for AJAX POSTs -->
+<form id="antiForgeryForm" style="display:none">
+    @Html.AntiForgeryToken()
+</form>
+<table id="companiesTable" class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TinNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StreetAdress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Region)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PostalCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Country)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/company.js"></script>
+}
