@@ -1,4 +1,5 @@
-﻿using AchuBan_ECom.Models.Models;
+﻿using AchuBan_Ecom.DataAccess.Repository.IRepository;
+using AchuBan_ECom.Models.Models;
 using AchuBan_ECom.Utility;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -22,6 +23,7 @@ namespace AchuBan_ECom.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
@@ -29,8 +31,10 @@ namespace AchuBan_ECom.Areas.Identity.Pages.Account
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
             _userManager = userManager;
             _roleManager = roleManager;
             _userStore = userStore;
@@ -83,6 +87,11 @@ namespace AchuBan_ECom.Areas.Identity.Pages.Account
             public string Role { get; set; }
             [ValidateNever]
             public IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> RoleList { get; set; }
+
+            public int? CompanyId { get; set; }
+            [ValidateNever]
+            public IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> CompanyList { get; set; }
+
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -112,6 +121,11 @@ namespace AchuBan_ECom.Areas.Identity.Pages.Account
                     {
                         Text = r,
                         Value = r
+                    }),
+                    CompanyList = _unitOfWork.CompanyRepository.GetAll().Select(r => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                    {
+                        Text = r.Name,
+                        Value = r.Id.ToString()
                     })
                 };
             }
@@ -136,6 +150,11 @@ namespace AchuBan_ECom.Areas.Identity.Pages.Account
                 user.State = Input.State;
                 user.PostalCode = Input.PostalCode;
 
+                if(Input.Role==SD.Role_Company)
+                {
+                    user.CompanyId = Input.CompanyId;
+                }
+
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -145,7 +164,7 @@ namespace AchuBan_ECom.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    if(String.IsNullOrEmpty(Input.Role))
+                    if (String.IsNullOrEmpty(Input.Role))
                     {
                         await _userManager.AddToRoleAsync(user, SD.Role_Customer);
                     }
